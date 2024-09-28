@@ -260,11 +260,10 @@ void setup(){
 
     while(myMouse.position!= make_pair(7,7)){ //replace with GOAL  
         Serial.println("while");
-        //vector<int> accessible_cells = observe(myMaze,myMouse);
-        //floodfillAlgorithm(myMaze);
+        vector<int> accessible_cells = observe(myMaze,myMouse);
+        floodfillAlgorithm(myMaze);
         //showFloodFillValues(myMaze);
-        cellAdjust(); ///Updated in the car
-        //nextCell(myMaze,myMouse,accessible_cells);
+        nextCell(myMaze,myMouse,accessible_cells);
     }
     delay(8000); //Delay before next Search Run
     ackReset(); //reset the mouse to initial position in the simulation/practical
@@ -296,11 +295,10 @@ void setup(){
 
     //FastRun
     while(myMouse.position!= make_pair(7,7)){ //replace with GOAL  
-        //vector<int> accessible_cells = observe(myMaze,myMouse);
-        //floodfillAlgorithm(myMaze); //Remove the floodfill calculation in the Fast Run
+        vector<int> accessible_cells = observe(myMaze,myMouse);
+        floodfillAlgorithm(myMaze); //Remove the floodfill calculation in the Fast Run
         //showFloodFillValues(myMaze);
-        cellAdjust(); ///Updated in the car
-        //nextCell(myMaze,myMouse,accessible_cells);
+        nextCell(myMaze,myMouse,accessible_cells);
     }
     digitalWrite(PA0, HIGH);
     delay(1000);
