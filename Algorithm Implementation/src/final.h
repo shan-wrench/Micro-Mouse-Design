@@ -93,8 +93,8 @@ bool wallRight_frontsharp(){
     // Serial.print("Left ");
     // Serial.println(distance);
     if(distance <= 250){
-        Serial.print("left-false: ");
-        Serial.println(distance);
+        // Serial.print("left-false: ");
+        // Serial.println(distance);
         return false;
     }
     return true;
@@ -105,8 +105,8 @@ bool wallLeft_frontsharp(){
     // Serial.print("Left ");
     // Serial.println(distance);
     if(distance <= 250){
-        Serial.print("left-false: ");
-        Serial.println(distance);
+        // Serial.print("left-false: ");
+        // Serial.println(distance);
         return false;
     }
     return true;

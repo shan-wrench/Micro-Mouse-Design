@@ -37,6 +37,9 @@ bool precheck=0;
 float previous_lefterror = 0;
 float previous_rightterror = 0;
 
+float d_left;
+float d_right;
+
 void log(const string& text) {
     //cerr << text << endl;
 }
@@ -229,7 +232,7 @@ void showFloodFillValues(Maze& maze){
 
 
 void setup(){
-    delay(5000);
+    delay(3000);
     Serial.begin(115200);
     sharpIR();
     motorDiver();
@@ -241,6 +244,23 @@ void setup(){
     pinMode(PA9, INPUT);
     pinMode(PA10, INPUT);
     pinMode(PA0, OUTPUT);
+
+    d_left=0;
+    d_right=0;
+
+    for(int i=0; i<50; i++){
+        d_left = d_left + analogRead(PA7);
+        }
+    d_left = d_left/50;
+
+    for(int i=0; i<50; i++){
+        d_right = d_right + analogRead(PA4);
+        }
+    d_right = d_right/50;
+
+    digitalWrite(PA0,HIGH);
+    delay(3000);
+    digitalWrite(PA0,LOW);
     
     vector<pair<int,int>> goal={{5,7}}; //Define the Goal cell
     Maze myMaze(16,goal); //Create the Maze obj
@@ -327,49 +347,34 @@ void setup(){
 }
 
 void wallFollower2(){
-    //delay(50);
+   //delay(50);
     int L_sharpValue = 0;
     int R_sharpValue = 0;
+    float C_sharpValue = 0; 
 
     for(int i=0; i<50; i++){
     L_sharpValue = L_sharpValue + analogRead(PA7);
     R_sharpValue = R_sharpValue + analogRead(PA4);
+    C_sharpValue = C_sharpValue + analogRead(PA3);
     }
     L_sharpValue = L_sharpValue/50;
     R_sharpValue = R_sharpValue/50;
+    C_sharpValue = C_sharpValue/50;
     int sharpError = L_sharpValue - R_sharpValue;
-    // Serial.print("l   : ");
-    // Serial.print(L_sharpValue);
-    // Serial.print("   r : ");
-    // Serial.println(R_sharpValue);
-    bool left = wallLeft_frontsharp();
+
+
+    
+    bool left = wallLeft_frontsharp(); //This could be WallLeft()
     bool right = wallRight_frontsharp();
 
 
 
     if (left && right){
-        //delay(50);
-        //if(wallLeft() && wallRight()){
-
-        //}
-        // state=0;
-        // if (state != preState)
-        // {
-        //     jump = 2;
-        //     rightLastError = 0;
-        // }
-        // if (jump>0)
-        // {
-        //     encoderPid();
-        //     //forwardBase();
-        //     jump = jump-1;
-        // }
-        // else{
         float kp = 0.04;
         leftPwm = leftBase + kp*sharpError;
         rightPwm = rightBase - kp*sharpError;
-        // Serial.print("both");
-        // Serial.println(sharpError);
+        Serial.print("both");
+        Serial.println(sharpError);
         if (leftPwm>100){
             leftPwm =100;
         }
@@ -388,62 +393,41 @@ void wallFollower2(){
     }
 
     else if (left){
-        encoderPid();
+        int L_sharpValue =0;
+
+        for(int i=0; i<50; i++){
+            L_sharpValue = L_sharpValue + analogRead(PA7);
+            }
+        L_sharpValue = L_sharpValue/50;
+
+        float kp = 0.4;
+        float lefterror = L_sharpValue -d_left ;
+
+        leftPwm = leftBase + kp*lefterror;
+        rightPwm = rightBase - kp*lefterror;
+
         forward();
-        // float kp_left = 0.009;
-        // float lefterror = L_sharpValue -350 ;
-        // // Serial.print("Left: ");
-        // // Serial.println(lefterror);
-       
-        // leftPwm = leftBase + kp_left*lefterror;
-        // rightPwm = rightBase - kp_left*lefterror;
-
-        // if (leftPwm>100){
-        //     leftPwm =100;
         // }
-        // else if (leftPwm <-100){
-        //     leftPwm =-100;
-        // }
-
-        // if (rightPwm>100){
-        //     rightPwm =100;
-        // }
-        // else if (rightPwm<- 100){
-        //     rightPwm =-100;
-        // }
-        // forward();
     }
 
     else if (right){
-        encoderPid();
-        forward();
-        // float kp_right = 0.009;
-        // float righterror = 350 - R_sharpValue;
-        // // Serial.print("Right: ");
-        // // Serial.println(righterror);
+        int R_sharpValue =0;
+
+        for(int i=0; i<50; i++){
+            R_sharpValue = R_sharpValue + analogRead(PA4);
+            }
+        R_sharpValue = R_sharpValue/50;
+
+
+        float kp_right = 0.4;
+        float righterror = d_right - R_sharpValue;
+
         
-        // leftPwm = leftBase + kp_right*righterror;
-        // rightPwm = rightBase - kp_right*righterror;
+        leftPwm = leftBase + kp_right*righterror;
+        rightPwm = rightBase - kp_right*righterror;
 
-        // if (leftPwm>100){
-        //     leftPwm =100;
-        // }
-        // else if (leftPwm <-100){
-        //     leftPwm =-100;
-        // }
-
-        // if (rightPwm>100){
-        //     rightPwm =100;
-        // }
-        // else if (rightPwm<- 100){
-        //     rightPwm =-100;
-        // }
-        // forward();
-        }
-    else{
-        encoderPid();
         forward();
-    }
+        }
 }
 
 // void wallFollower2(){
