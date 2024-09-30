@@ -19,47 +19,94 @@ int mazeHeight() {
     return atoi(response.c_str());
 }
 
-int readytoTurn(){
-    int C_sharpValue = 0;
-        for(int i=0; i<2; i++){
-            C_sharpValue = C_sharpValue + analogRead(sharpc);
-        }
-        C_sharpValue = C_sharpValue/2;
-        int C_sharpError = 620 - C_sharpValue;
+float readytoTurn(){
+    float distance = 0;
+    for(int i=0;i<=20;i++){
+        distance = distance + sharp_c();
+    }
+    distance = distance/20;
+    // Serial.print("Front ");
+    // Serial.println(distance);
+
+    float C_sharpError = 88 - distance;
         
-    while(C_sharpError>0){
-        for(int i=0; i<2; i++){
-            C_sharpValue = C_sharpValue + analogRead(sharpc);
+    while(C_sharpError<0){
+        float distance = 0;
+        for(int i=0;i<=20;i++){
+            distance = distance + sharp_c();
         }
-        C_sharpValue = C_sharpValue/2;
-        C_sharpError = 620 - C_sharpValue;
+        distance = distance/20;
+        // Serial.print("Front ");
+        // Serial.println(distance);
+        C_sharpError = 88 - distance;
         encoderPid_turnready();
         forward();
     }
-    delay(100);
     brake();
-    return C_sharpValue;
+    return distance;
 }
 
 bool wallFront() {
-    float distance = sharp_c();
-    if(distance <= 120){
-        return true;
+    float distance = 0;
+    for(int i=0;i<=20;i++){
+        distance = distance + sharp_c();
     }
-    return false;
+    distance = distance/20;
+    // Serial.print("Front ");
+    // Serial.println(distance);
+    if(distance > 150){
+        Serial.print("front-false: ");
+        Serial.println(distance);
+        return false;
+    }
+    Serial.print("front-true: ");
+    Serial.println(distance);
+    return true;
 }
 
 bool wallRight() {
-    float distance = shar_r();
-    if(distance <= 120){
+    float distance = shar_r_wall();
+    // Serial.print("Right ");
+    // Serial.println(distance);
+    if(distance <= 250){
+        Serial.print("right-false: ");
+        Serial.println(distance);
         return false;
     }
     return true;
 }
 
 bool wallLeft() {
+    float distance = shar_l_wall();
+    // Serial.print("Left ");
+    // Serial.println(distance);
+    if(distance <= 500){
+        Serial.print("left-false: ");
+        Serial.println(distance);
+        return false;
+    }
+    return true;
+}
+
+bool wallRight_frontsharp(){
     float distance = shar_l();
-    if(distance <= 120){
+    // Serial.print("Left ");
+    // Serial.println(distance);
+    if(distance <= 250){
+        Serial.print("left-false: ");
+        Serial.println(distance);
+        return false;
+    }
+    return true;
+}
+
+bool wallLeft_frontsharp(){
+    float distance = shar_r();
+    // Serial.print("Left ");
+    // Serial.println(distance);
+    if(distance <= 250){
+        Serial.print("left-false: ");
+        Serial.println(distance);
         return false;
     }
     return true;
@@ -68,16 +115,20 @@ bool wallLeft() {
 void moveForward() {
     cellForward();
     brake();
-    delay(500);
+    //delay(500);
 }
 
 void turnRight() {
-    readytoTurn();
+    if(wallFront()){
+        readytoTurn();
+    }
     rightHalfTurn();
 }
 
 void turnLeft() {
-    readytoTurn();
+    if(wallFront()){
+        readytoTurn();
+    }
     leftHalfTurn();
 }
 

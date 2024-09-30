@@ -19,11 +19,13 @@
 #define PWMB PA1
 
 #define leftOut1 PB1   //interrupt pins of motors 
-#define leftOut2 PA3      
+#define leftOut2 PB3      
 #define rightOut1 PB0
 #define rightOut2 PA12
 
-#define sharpl PA7 // left
+#define sharpl_wall PA5 // straight sensors
+#define sharpr_wall PA6
+#define sharpl PA7 // left angled
 #define sharpr PA4 // right
 #define sharpc PA3 // center
 
@@ -51,6 +53,9 @@ void sharpIR()
     pinMode(sharpl, INPUT);
     pinMode(sharpr, INPUT);
     pinMode(sharpc, INPUT);
+    pinMode(sharpl_wall, INPUT);
+    pinMode(sharpr_wall, INPUT);
+
 }
 
 

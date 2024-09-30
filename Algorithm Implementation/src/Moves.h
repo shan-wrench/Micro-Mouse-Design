@@ -62,9 +62,9 @@ void cellForward()
     while (leftEncoder <= encoderLeftCount || rightEncoder <= encoderRightCount)
     {
         //wallFollower_singleWall();
-        // tofPid();
-        encoderPid();
-        forward();
+        // encoderPid();
+        // forward();
+        wallFollower2();
     }
     // encoderLeftCount = encoderLeftCount + 38;
     // encoderRightCount = encoderRightCount + 38;

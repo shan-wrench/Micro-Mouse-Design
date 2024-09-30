@@ -143,8 +143,8 @@ void rightHalfTurn()
     encoderRightCount = 0;
     leftEncoder = 0;
     rightEncoder = 0;
-    encoderRightCount= encoderRightCount + 61;
-    encoderLeftCount= encoderLeftCount + 61;
+    encoderRightCount= encoderRightCount + 65;
+    encoderLeftCount= encoderLeftCount + 65;
     rightBase_turn90 = 70;
     leftBase_turn90 = 70;
     while (rightEncoder <= encoderRightCount || leftEncoder <= encoderLeftCount)
@@ -162,8 +162,8 @@ void rightHalfTurn()
     {
         Right();
     }
-    encoderRightCount= encoderRightCount + 61;
-    encoderLeftCount= encoderLeftCount + 61;
+    encoderRightCount= encoderRightCount + 65;
+    encoderLeftCount= encoderLeftCount + 65;
     while (rightEncoder <= encoderRightCount || leftEncoder <= encoderLeftCount)
     {
         dif = leftEncoder - encoderLeftCount + 100;
@@ -186,8 +186,8 @@ void leftHalfTurn()
     encoderRightCount = 0;
     leftEncoder = 0;
     rightEncoder = 0;
-    encoderRightCount= encoderRightCount + 57;
-    encoderLeftCount= encoderLeftCount + 57;
+    encoderRightCount= encoderRightCount + 61;
+    encoderLeftCount= encoderLeftCount + 61;
     rightBase_turn90 = 70;
     leftBase_turn90 = 70;
     while (rightEncoder <= encoderRightCount || leftEncoder <= encoderLeftCount)
@@ -205,8 +205,8 @@ void leftHalfTurn()
     {
         Left();
     }
-    encoderRightCount= encoderRightCount + 57;
-    encoderLeftCount= encoderLeftCount + 57;
+    encoderRightCount= encoderRightCount + 61;
+    encoderLeftCount= encoderLeftCount + 61;
     while (rightEncoder <= encoderRightCount || leftEncoder <= encoderLeftCount)
     {
         dif = leftEncoder - encoderLeftCount + 100;

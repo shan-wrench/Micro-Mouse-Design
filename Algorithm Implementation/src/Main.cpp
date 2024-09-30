@@ -11,9 +11,6 @@
 #include <s.h>
 #include <sharp.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <Display.h>
 #include <Variables.h>
 #include <ZlgoVariables.h>
 #include <Motors.h>
@@ -181,7 +178,7 @@ void nextCell(Maze& maze, Mouse& mouse, vector<int>& accessible_cells){
         }
     }
 
-    if(minValue>200){
+    if(minValue>500){
         log("TurnAround");
             turnLeft();
             mouse.rotateLeft();
@@ -241,15 +238,31 @@ void setup(){
     attachInterrupt(digitalPinToInterrupt(PA3), countLeftOut1, RISING);
     attachInterrupt(digitalPinToInterrupt(PB0), countRightOut1, RISING);
     attachInterrupt(digitalPinToInterrupt(PA12), countRightOut1, RISING);  
-    displaySetup();
     pinMode(PA9, INPUT);
     pinMode(PA10, INPUT);
     pinMode(PA0, OUTPUT);
     
-    vector<pair<int,int>> goal={{7,7}}; //Define the Goal cell
+    vector<pair<int,int>> goal={{5,7}}; //Define the Goal cell
     Maze myMaze(16,goal); //Create the Maze obj
     Mouse myMouse('n',{0,0}); //Create the Mouse obj
     int search_turns = 3; //Define the number if search turns
+
+    // int L_wallDistance=0;
+    // int R_wallDistance=0;
+
+    // if(wallRight()){
+    //     for(int i=0; i<50; i++){
+    //         R_wallDistance = R_wallDistance + analogRead(PA4);
+    // }
+    //     distance_wall = R_wallDistance/50;
+    // }
+    // else if(wallLeft()){
+    //     for(int i=0; i<50; i++){
+    //         L_wallDistance = L_wallDistance + analogRead(PA7);
+    // }
+    //         distance_wall = L_wallDistance/50;
+    // }
+
 
     //floodfillAlgorithm(myMaze);
 
@@ -258,7 +271,7 @@ void setup(){
     
     fastrun =false;
 
-    while(myMouse.position!= make_pair(7,7)){ //replace with GOAL  
+    while(myMouse.position!= make_pair(5,7)){ //replace with GOAL  
         Serial.println("while");
         vector<int> accessible_cells = observe(myMaze,myMouse);
         floodfillAlgorithm(myMaze);
@@ -275,26 +288,26 @@ void setup(){
     delay(1000);
     digitalWrite(PA0,LOW);
 
-    while(check == precheck){
-          check = digitalRead(PA9);
-          delay(1000);
-          if(digitalRead(PA10)){
-            fastrun = true;
-          }
+    // while(check == precheck){
+    //       check = digitalRead(PA9);
+    //       delay(1000);
+    //       if(digitalRead(PA10)){
+    //         fastrun = true;
+    //       }
 
-    }
-    if(check!=precheck){
-        precheck=check;
-    }
+    // }
+    // if(check!=precheck){
+    //     precheck=check;
+    // }
 
-    if(fastrun){
-        break;
-    }
+    // if(fastrun){
+    //     break;
+    // }
 
     }   
 
     //FastRun
-    while(myMouse.position!= make_pair(7,7)){ //replace with GOAL  
+    while(myMouse.position!= make_pair(5,7)){ //replace with GOAL  
         vector<int> accessible_cells = observe(myMaze,myMouse);
         floodfillAlgorithm(myMaze); //Remove the floodfill calculation in the Fast Run
         //showFloodFillValues(myMaze);
@@ -329,8 +342,8 @@ void wallFollower2(){
     // Serial.print(L_sharpValue);
     // Serial.print("   r : ");
     // Serial.println(R_sharpValue);
-    bool left = wallLeft();
-    bool right = wallRight();
+    bool left = wallLeft_frontsharp();
+    bool right = wallRight_frontsharp();
 
 
 
@@ -339,24 +352,24 @@ void wallFollower2(){
         //if(wallLeft() && wallRight()){
 
         //}
-        state=0;
-        if (state != preState)
-        {
-            jump = 2;
-            rightLastError = 0;
-        }
-        if (jump>0)
-        {
-            encoderPid();
-            //forwardBase();
-            jump = jump-1;
-        }
-        else{
+        // state=0;
+        // if (state != preState)
+        // {
+        //     jump = 2;
+        //     rightLastError = 0;
+        // }
+        // if (jump>0)
+        // {
+        //     encoderPid();
+        //     //forwardBase();
+        //     jump = jump-1;
+        // }
+        // else{
         float kp = 0.04;
         leftPwm = leftBase + kp*sharpError;
         rightPwm = rightBase - kp*sharpError;
-        Serial.print("both");
-        Serial.println(sharpError);
+        // Serial.print("both");
+        // Serial.println(sharpError);
         if (leftPwm>100){
             leftPwm =100;
         }
@@ -371,96 +384,169 @@ void wallFollower2(){
             rightPwm =-100;
         }
         forward();
-        }
+        //}
     }
 
     else if (left){
-        state=1;
-        if (state != preState)
-        {
-            jump = 2;
-            rightLastError = 0;
-        }
-        if (jump>0)
-        {
-            encoderPid();
-            //forwardBase();
-            jump = jump-1;
-        }
-        else{
-        float kp_left = 0.008;
-        float lefterror = L_sharpValue -373 ;
-        Serial.print("Left: ");
-        Serial.println(lefterror);
-        if(lefterror<10){
-            lefterror = 0;
-        }
-        leftPwm = leftBase + kp_left*lefterror;
-        rightPwm = rightBase - kp_left*lefterror;
-
-        if (leftPwm>100){
-            leftPwm =100;
-        }
-        else if (leftPwm <-100){
-            leftPwm =-100;
-        }
-
-        if (rightPwm>100){
-            rightPwm =100;
-        }
-        else if (rightPwm<- 100){
-            rightPwm =-100;
-        }
+        encoderPid();
         forward();
-        }
+        // float kp_left = 0.009;
+        // float lefterror = L_sharpValue -350 ;
+        // // Serial.print("Left: ");
+        // // Serial.println(lefterror);
+       
+        // leftPwm = leftBase + kp_left*lefterror;
+        // rightPwm = rightBase - kp_left*lefterror;
+
+        // if (leftPwm>100){
+        //     leftPwm =100;
+        // }
+        // else if (leftPwm <-100){
+        //     leftPwm =-100;
+        // }
+
+        // if (rightPwm>100){
+        //     rightPwm =100;
+        // }
+        // else if (rightPwm<- 100){
+        //     rightPwm =-100;
+        // }
+        // forward();
     }
 
     else if (right){
-        state=2;
-        if (state != preState)
-        {
-            jump = 2;
-            rightLastError = 0;
-        }
-        if (jump>0)
-        {
-            encoderPid();
-            //forwardBase();
-            jump = jump-1;
-        }
-        else{
-        float kp_right = 0.008;
-        float righterror = 373 - R_sharpValue;
-        Serial.print("Right: ");
-        Serial.println(righterror);
-        if(righterror<10){
-            righterror = 0;
-        }
-        leftPwm = rightBase + kp_right*righterror;
-        rightPwm = rightBase - kp_right*righterror;
-
-        if (leftPwm>100){
-            leftPwm =100;
-        }
-        else if (leftPwm <-100){
-            leftPwm =-100;
-        }
-
-        if (rightPwm>100){
-            rightPwm =100;
-        }
-        else if (rightPwm<- 100){
-            rightPwm =-100;
-        }
+        encoderPid();
         forward();
-        }
-    }
-    // cellForward();
-    // brake();
-    // delay(3000);
-    preState =state;
+        // float kp_right = 0.009;
+        // float righterror = 350 - R_sharpValue;
+        // // Serial.print("Right: ");
+        // // Serial.println(righterror);
+        
+        // leftPwm = leftBase + kp_right*righterror;
+        // rightPwm = rightBase - kp_right*righterror;
 
+        // if (leftPwm>100){
+        //     leftPwm =100;
+        // }
+        // else if (leftPwm <-100){
+        //     leftPwm =-100;
+        // }
+
+        // if (rightPwm>100){
+        //     rightPwm =100;
+        // }
+        // else if (rightPwm<- 100){
+        //     rightPwm =-100;
+        // }
+        // forward();
+        }
+    else{
+        encoderPid();
+        forward();
+    }
 }
+
+// void wallFollower2(){
+//     //delay(50);
+//     int L_sharpValue = 0;
+//     int R_sharpValue = 0;
+
+//     for(int i=0; i<50; i++){
+//     L_sharpValue = L_sharpValue + analogRead(PA7);
+//     R_sharpValue = R_sharpValue + analogRead(PA4);
+//     }
+//     L_sharpValue = L_sharpValue/50;
+//     R_sharpValue = R_sharpValue/50;
+//     int sharpError = L_sharpValue - R_sharpValue;
+//     // Serial.print("l   : ");
+//     // Serial.print(L_sharpValue);
+//     // Serial.print("   r : ");
+//     // Serial.println(R_sharpValue);
+//     bool left = wallLeft_frontsharp();
+//     bool right = wallRight_frontsharp();
+
+
+
+//     if (left && right){
+//         float kp = 0.04;
+//         leftPwm = leftBase + kp*sharpError;
+//         rightPwm = rightBase - kp*sharpError;
+//         Serial.print("both");
+//         Serial.println(sharpError);
+//         if (leftPwm>100){
+//             leftPwm =100;
+//         }
+//         else if (leftPwm <-100){
+//             leftPwm =-100;
+//         }
+
+//         if (rightPwm>100){
+//             rightPwm =100;
+//         }
+//         else if (rightPwm<- 100){
+//             rightPwm =-100;
+//         }
+//         forward();
+//         //}
+//     }
+//     else if (left || right){
+//         if(left){
+//             float kp_left = 0.07;
+//             float kd_left = 0;
+//             float lefterror = L_sharpValue -350 ;
+//             float pid_error = kd_left*(previous_lefterror - lefterror) + kp_left*lefterror;
+//             previous_lefterror=lefterror;
+//             Serial.print("Left: ");
+//             Serial.println(lefterror);
+//             leftPwm = leftBase + kp_left*pid_error;
+//             rightPwm = rightBase - kp_left*pid_error;
+//         }else{
+//             float kp_right = 0.07;
+//             float kd_right = 0;
+//             float righterror = 350 - R_sharpValue ;
+//             float pid_error = kd_right*(previous_rightterror - righterror) + kp_right*righterror;
+//             previous_rightterror=righterror;
+//             leftPwm = rightBase + kp_right*righterror;
+//             rightPwm = rightBase - kp_right*righterror;
+
+//         }
+
+//         encoderError = leftEncoder - rightEncoder;
+//         if (encoderError > 50 )
+//         {
+//             encoderError = 10;
+//         }
+//         else if (encoderError < -50)
+//         {
+//             encoderError = -10;
+//         }
+//         encoderCorrection = float(encoderError * encoderP) + float(encoderLastError * encoderD);
+//         encoderLastError = encoderError;
+//         leftPwm = leftPwm - encoderCorrection;
+//         rightPwm = rightPwm + encoderCorrection;
+        
+
+//         if (leftPwm>100){
+//             leftPwm =100;
+//         }
+//         else if (leftPwm <-100){
+//             leftPwm =-100;
+//         }
+
+//         if (rightPwm>100){
+//             rightPwm =100;
+//         }
+//         else if (rightPwm<- 100){
+//             rightPwm =-100;
+//         }
+//         forward();
+        
+//     }
+//     else{
+//         encoderPid();
+//         forward();
+//     }
+// }
 
 //Following a single wall
 void wallFollower_singleWall(){
@@ -483,10 +569,6 @@ void wallFollower_singleWall(){
         float kd_left = 0;
         float lefterror = L_sharpValue -373 ;
         float pid_error = kd_left*(previous_lefterror - lefterror) + kp_left*lefterror;
-        display.clearDisplay();
-        //display_line("L:",0,0,2);
-        display_line(String(lefterror),0,0,2);
-        display.display();
         Serial.print("Left: ");
         Serial.println(lefterror);
         leftPwm = leftBase + kp_left*pid_error;
@@ -513,9 +595,6 @@ void wallFollower_singleWall(){
         float kp_right = 0.07;
         float kd_right = 0;
         float righterror = L_sharpValue -373 ;
-        //display_line("R:",2,0,2);
-        display_line(String(righterror),3,0,2);
-        display.display();
         float pid_error = kd_right*(previous_rightterror - righterror) + kp_right*righterror;
         leftPwm = rightBase + kp_right*righterror;
         rightPwm = rightBase - kp_right*righterror;
@@ -709,7 +788,17 @@ void cellAdjust(){
 
 
 void loop(){
-
+    //cellForward();
+    //wallLeft();
+    //wallRight();
+    // wallFront();
+    //delay(500);
+    // display.clearDisplay();
+    // delay(100);
+    // int c = wallFront();
+    // display_line(String(c),0,20,2);
+    // delay(1000);
+    // display.clearDisplay();
 //     // cellForward();
 //     // brake();
 //     // cellAlign();
@@ -725,7 +814,78 @@ void loop(){
 //     precheck = check;
 //   }
 }
-    
+
+
+// void wall_plus_encorder(){
+//     delay(10);
+//     int L_sharpValue = 0;
+//     int R_sharpValue = 0; 
+//     L_sharpValue = L_sharpValue + analogRead(PA7);
+//     R_sharpValue = R_sharpValue + analogRead(PA4);
+//     int sharpError = L_sharpValue - R_sharpValue;
+
+//     bool left = wallLeft();
+//     bool right = wallRight();
+
+//     if (left || right){
+//         if(left){
+//             float kp_left = 0.07;
+//             float kd_left = 0;
+//             float lefterror = 350 -373 ;
+//             float pid_error = kd_left*(previous_lefterror - lefterror) + kp_left*lefterror;
+//             previous_lefterror=lefterror;
+//             Serial.print("Left: ");
+//             Serial.println(lefterror);
+//             leftPwm = leftBase + kp_left*pid_error;
+//             rightPwm = rightBase - kp_left*pid_error;
+//         }else{
+//             float kp_right = 0.07;
+//             float kd_right = 0;
+//             float righterror = 350 -373 ;
+//             float pid_error = kd_right*(previous_rightterror - righterror) + kp_right*righterror;
+//             leftPwm = rightBase + kp_right*righterror;
+//             rightPwm = rightBase - kp_right*righterror;
+
+//         }
+
+//         encoderError = leftEncoder - rightEncoder;
+//         if (encoderError > 50 )
+//         {
+//             encoderError = 10;
+//         }
+//         else if (encoderError < -50)
+//         {
+//             encoderError = -10;
+//         }
+//         encoderCorrection = float(encoderError * encoderP) + float(encoderLastError * encoderD);
+//         encoderLastError = encoderError;
+//         leftPwm = leftPwm - encoderCorrection;
+//         rightPwm = rightPwm + encoderCorrection;
+        
+
+//         if (leftPwm>100){
+//             leftPwm =100;
+//         }
+//         else if (leftPwm <-100){
+//             leftPwm =-100;
+//         }
+
+//         if (rightPwm>100){
+//             rightPwm =100;
+//         }
+//         else if (rightPwm<- 100){
+//             rightPwm =-100;
+//         }
+//         forward();
+        
+//     }
+//     else{
+//         encoderPid();
+//         forward();
+//     }   
+// }
+
+
     
 
 
