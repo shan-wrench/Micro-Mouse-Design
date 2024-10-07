@@ -19,9 +19,11 @@ Our team, **"The ImagineX"** consists of:
 
 ![Alt text](Media/robot.jpg)
 
+[![Maze Navigation Video](Media/Video1.mp4)](https://github.com/user-attachments/assets/22a01859-a595-46c0-b6c5-1381d1217ea8
+)
+
 ## Our Task
 
-![Maze Navigation Video](Media/Video1.mp4)
 
 
 For detailed information about our task, please refer to the attached PDF document.
