@@ -4,13 +4,14 @@ ROBOFEST is an annual robotics competition organized by the Sri Lanka Institute 
 
 ## Our Team
 
-Our team, "The ImagineX" consists of:
+Our team, **"The ImagineX"** consists of:
 
-🌟 Sahan Dissanayaka  
-🌟 Dilshan Nuwantha
-🌟 Ruchira Abeywardhana 
-🌟 Pasindu Kulasingham  
-🌟 Senum Dodangoda  
+- 🌟 Sahan Dissanayaka
+- 🌟 Dilshan Nuwantha
+- 🌟 Ruchira Abeywardhana
+- 🌟 Pasindu Kulasingham
+- 🌟 Senum Dodangoda
+
 
 ![Alt text](Media/Team.jpg)
 
