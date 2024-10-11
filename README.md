@@ -28,7 +28,7 @@ Our team, **"The ImagineX"** consists of:
 
 For detailed information about our task, please refer to the attached PDF document.
 
-[Download Task PDF](ROBOFEST-2024-University-Category.pdf)
+[Download Task PDF](Media/ROBOFEST-2024-University-Category.pdf)
 
 ## Project Objectives
 
